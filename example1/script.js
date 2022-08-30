@@ -46,6 +46,8 @@ svg
   .attr("transform", "rotate(-90)")
   .text("Execution Times");
 
+var label = svg.selectAll("text").data;
+
 // get the data
 d3.csv("data.csv").then(function (data) {
   // format the data
