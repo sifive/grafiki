@@ -37,6 +37,7 @@ svg
   .attr('y', height + 36)
   .text('Start Times');
 
+// y axis
 svg
   .append('text')
   .attr('class', 'y label')
