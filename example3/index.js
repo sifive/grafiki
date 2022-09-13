@@ -1,58 +1,80 @@
-// set the dimensions and margins of the graph
-const margin = { top: 100, right: 30, bottom: 90, left: 90 },
-  width = 660 - margin.left - margin.right,
-  height = 350 - margin.top - margin.bottom;
+margin = { top: 20, right: 0, bottom: 30, left: 40 };
+height = 500 - margin.top - margin.bottom;
+width = 460 - margin.left - margin.right;
 
-// append the svg object to the body of the page
-const svg = d3
-  .select('#my_dataviz')
-  .append('svg')
-  .attr('width', width + margin.left + margin.right)
-  .attr('height', height + margin.top + margin.bottom)
-  .append('g')
-  .attr('transform', `translate(${margin.left},${margin.top})`);
+d3.csv('alphabet.csv').then(function (data) {
+  // format the data
+  data.forEach(function (d) {
+    d.letter = d.letter;
+    d.frequency = +d.frequency;
+  });
 
-// Parse the Data
-d3.csv('data.csv').then(function (data) {
-  // X axis
-  const x = d3
+  console.log(data);
+
+  // x axis -------
+  x = d3
     .scaleBand()
-    .range([0, width])
-    .domain(data.map((d) => d.Country))
-    .padding(0.2);
+    .domain(data.map((d) => d.letter))
+    //Here the domain is the letters in the our data and that's what will be written on the Axis
+    .range([margin.left, width - margin.right])
+    // margin.left and width-margin.right are respectively the minimum and maximum extents of the bands and that's where the axis will be placed.
+    .padding(0.1);
+
+  // y axis
+  y = d3
+    .scaleLinear()
+    .domain([0, d3.max(data, (d) => d.frequency)])
+    .nice()
+    //Here the domain of y will vary between 0 and the maximum frequency of the letters and that's what will be written on the Axis
+    .range([height - margin.bottom, margin.top]);
+
+  // --
+  xAxis = (g) =>
+    g
+      .attr('transform', `translate(0,${height - margin.bottom})`) // This controls the vertical position of the Axis
+      .call(d3.axisBottom(x).tickSizeOuter(0)); //Creates bottom horizontal axis with an  outer tick size equal to 0
+
+  //
+  yAxis = (g) =>
+    g
+      .attr('transform', `translate(${margin.left},0)`) // This controls the horizontal position of the Axis
+      .call(d3.axisLeft(y)) //Creates left vertical axis
+      .call((g) => g.select('.domain').remove()); //This removes the domain from the DOM API.
+
+  // ----
+  var svg = d3
+    .select('#cegGraph')
+    .append('svg')
+    .attr('width', width - margin.left - margin.right)
+    .attr('height', height - margin.top - margin.bottom)
+    .attr('viewBox', [0, 0, width, height]);
+
   svg
     .append('g')
-    .attr('transform', `translate(0,${height})`)
-    .call(d3.axisBottom(x))
-    .selectAll('text')
-    .attr('transform', 'translate(-10,0)rotate(-45)')
-    .style('text-anchor', 'end');
+    .attr('transform', 'translate(-20,' + height + ')')
+    .call(d3.axisBottom(x));
 
-  // Add Y axis
-  const y = d3.scaleLinear().domain([0, 13000]).range([height, 0]);
+  // add the y Axis
   svg.append('g').call(d3.axisLeft(y));
 
-  // Bars
-  svg
-    .selectAll('mybar')
-    .data(data)
-    .join('rect')
-    .attr('x', (d) => x(d.Country))
-    .attr('width', x.bandwidth())
-    .attr('fill', '#69b3a2')
-    // no bar at the beginning thus:
-    .attr('height', (d) => height - y(0)) // always equal to 0
-    .attr('y', (d) => y(0));
+  // svg.append('g').attr('class', 'x-axis').call(xAxis);
 
-  // Animation
-  svg
-    .selectAll('rect')
-    .transition()
-    .duration(800)
-    .attr('y', (d) => y(d.Value))
-    .attr('height', (d) => height - y(d.Value))
-    .delay((d, i) => {
-      console.log(i);
-      return i * 200;
-    });
+  // //   //Add the y-Axis
+  // svg.append('g').attr('class', 'y-axis').call(yAxis);
+
+  // this is the end of the function
 });
+
+// let JustAxis = () => {
+//   // creating of the svg object in the body of the page
+//   const svg = d3.create('svg').attr('viewBox', [0, 0, width, height]); //This is the viewBox that we will be seeing (size of our svg)
+//   //Add the x-Axis
+//   svg.append('g').attr('class', 'x-axis').call(xAxis);
+
+//   //Add the y-Axis
+//   svg.append('g').attr('class', 'y-axis').call(yAxis);
+
+//   d3.select('#cegGraph').append(svg);
+
+// return svg.node();
+// };

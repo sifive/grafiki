@@ -84,6 +84,9 @@ d3.csv('data.csv').then(function (data) {
     .attr('y', function (d) {
       return y(d.executionTimes);
     })
+    .transition()
+    // .ease(d3.easeLinear)÷
+    .duration(1000)
     .attr('height', function (d) {
       return height - y(d.executionTimes);
     });
