@@ -130,7 +130,7 @@ let addAxisLabel = (svg) => {
     .text(yAxisLabel);
 };
 
-let buildBars = (data, svg) => {
+let buildBars = (data, svg, tip) => {
   svg
     .append('g')
     .attr('class', 'bars')
@@ -140,7 +140,13 @@ let buildBars = (data, svg) => {
     .join('rect')
     .attr('x', (d) => x(d.startTime))
     .attr('y', (d) => y(0))
-    .attr('width', x.bandwidth());
+    .attr('width', x.bandwidth())
+    .on('mouseover', function (event, d) {
+      console.log(d3.select(this).datum().exeTime);
+      const element = d3.select(this).datum().exeTime;
+      tip.show(event, d, element);
+    })
+    .on('mouseout', tip.hide);
 };
 
 let margin = { top: 20, right: 30, bottom: 80, left: 60 },
@@ -153,35 +159,21 @@ d3.json('output.json').then(function (data) {
 
   // build XY scales
   buildXY(data);
+  // Tooltip
+  var tip = d3
+    .tip()
+    .attr('class', 'd3-tip')
+    .html((EVENT, d) => 'Start Time:' + d.startTime);
 
   const svg = d3
     .select('#cegDiv') // div to be attached to
     .append('svg')
     .attr('viewBox', [0, 0, width, height])
-    .call(zoom);
-
-  // -------- Tooltip CODE ---------
-  // /* Initialize tooltip */
-  var tip = d3
-    .tip()
-    .attr('class', 'd3-tip')
-    .html((EVENT, d) => console.log('sss'));
-
-  // /* Invoke the tip in the context of your visualization */
-  // svg.call(tip);
-
-  // // ------------- Showing tip on particular element, but based on other DOM element's data -------------
-  // svg
-  //   .selectAll('g')
-  //   .on('mouseover', function (event, d) {
-  //     const element = d3.select(this).select('.particular-element');
-  //     tip.show(event, d, element.node());
-  //   })
-  //   .on('mouseout', tip.hide);
-  // -----
+    .call(zoom)
+    .call(tip);
 
   //  build the bars of the graph
-  buildBars(data, svg);
+  buildBars(data, svg, tip);
   // build axis
   buildAxis();
   // animation
