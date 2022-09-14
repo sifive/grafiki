@@ -1,6 +1,6 @@
 let yAxisLabel = 'Execution Times';
 let xAxisLabel = 'Iteration Times';
-let exeKey = 'executionTimes';
+let exeKey = 'executions';
 
 // functions for various parts
 let buildXY = (data) => {
@@ -35,7 +35,7 @@ let barAnimation = (svg) => {
   svg
     .selectAll('rect')
     .transition()
-    .duration(800)
+    .duration(100)
     .attr('y', function (d) {
       return y(d.exeTime);
     })
@@ -44,7 +44,7 @@ let barAnimation = (svg) => {
     })
     .attr('opacity', 1)
     .delay(function (d, i) {
-      return i * 15;
+      return i * 1;
     });
 };
 function zoom(svg) {
@@ -54,9 +54,10 @@ function zoom(svg) {
   ];
 
   svg.call(
+    // d3 zoom behavior
     d3
       .zoom()
-      .scaleExtent([1, 20])
+      .scaleExtent([1, 50])
       .translateExtent(extent)
       .extent(extent)
       .on('zoom', zoomed)
@@ -78,21 +79,21 @@ let addAxis = (svg) => {
   svg.append('g').attr('class', 'x-axis').call(xAxis);
 
   svg.append('g').attr('class', 'y-axis').call(yAxis);
+  // svg.append('g').attr('class', 'top-axis').call(topAxis);
 };
 
 let addBarAxisLabel = (svg, data) => {
-  svg
+  const bText = svg
     .selectAll('.text')
     .data(data)
     .enter()
     .append('text')
     .transition()
-    .duration(600)
+    .duration(100)
     .delay(function (d, i) {
-      // console.log(i);
-      return i * 10;
+      return i * 1;
     })
-    .attr('class', 'label')
+    .attr('class', 'bar label')
     .attr('x', function (d) {
       return x(d.startTime);
     })
@@ -117,7 +118,6 @@ let addAxisLabel = (svg) => {
     .text(xAxisLabel);
 
   // text label for the y axis
-
   svg
     .append('text')
     .attr('id', 'yAxisLabel')
@@ -142,7 +142,6 @@ let buildBars = (data, svg, tip) => {
     .attr('y', (d) => y(0))
     .attr('width', x.bandwidth())
     .on('mouseover', function (event, d) {
-      console.log(d3.select(this).datum().exeTime);
       const element = d3.select(this).datum().exeTime;
       tip.show(event, d, element);
     })
@@ -155,7 +154,8 @@ let margin = { top: 20, right: 30, bottom: 80, left: 60 },
 
 // read json data
 d3.json('output.json').then(function (data) {
-  data = data['executionTimes'];
+  console.log();
+  data = data[exeKey];
 
   // build XY scales
   buildXY(data);

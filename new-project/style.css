@@ -4,6 +4,7 @@
 
 #exeBars:hover {
   opacity: 0.5;
+  stroke: black;
 }
 
 #my_dataviz {
