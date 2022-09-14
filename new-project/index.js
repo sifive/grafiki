@@ -6,13 +6,13 @@ let exeKey = 'executions';
 let buildXY = (data) => {
   y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, (d) => d.exeTime + 10)])
+    .domain([0, d3.max(data, (d) => d.duration + 10)])
     .nice()
     .range([height - margin.bottom, margin.top]);
 
   x = d3
     .scaleBand()
-    .domain(data.map((d) => d.startTime))
+    .domain(data.map((d) => d.entryTime))
     .range([margin.left, width - margin.right])
     .padding(0.1);
 };
@@ -37,10 +37,10 @@ let barAnimation = (svg) => {
     .transition()
     .duration(100)
     .attr('y', function (d) {
-      return y(d.exeTime);
+      return y(d.duration);
     })
     .attr('height', function (d) {
-      return y(0) - y(d.exeTime);
+      return y(0) - y(d.duration);
     })
     .attr('opacity', 1)
     .delay(function (d, i) {
@@ -69,7 +69,7 @@ function zoom(svg) {
     );
     svg
       .selectAll('.bars rect')
-      .attr('x', (d) => x(d.startTime))
+      .attr('x', (d) => x(d.entryTime))
       .attr('width', x.bandwidth());
     svg.selectAll('.x-axis').call(xAxis);
   }
@@ -79,7 +79,6 @@ let addAxis = (svg) => {
   svg.append('g').attr('class', 'x-axis').call(xAxis);
 
   svg.append('g').attr('class', 'y-axis').call(yAxis);
-  // svg.append('g').attr('class', 'top-axis').call(topAxis);
 };
 
 let addBarAxisLabel = (svg, data) => {
@@ -95,15 +94,15 @@ let addBarAxisLabel = (svg, data) => {
     })
     .attr('class', 'bar label')
     .attr('x', function (d) {
-      return x(d.startTime);
+      return x(d.entryTime);
     })
     .attr('y', function (d) {
-      return y(d.exeTime) - 20;
+      return y(d.duration) - 20;
     })
     .attr('dy', '2.75em')
     .attr('dx', '3')
     .text(function (d) {
-      return d.exeTime;
+      return d.duration;
     });
 };
 
@@ -138,7 +137,7 @@ let buildBars = (data, svg, tip) => {
     .selectAll('rect')
     .data(data)
     .join('rect')
-    .attr('x', (d) => x(d.startTime))
+    .attr('x', (d) => x(d.entryTime))
     .attr('y', (d) => y(0))
     .attr('width', x.bandwidth())
     .on('mouseover', function (event, d) {
@@ -154,7 +153,6 @@ let margin = { top: 20, right: 30, bottom: 80, left: 60 },
 
 // read json data
 d3.json('output.json').then(function (data) {
-  console.log();
   data = data[exeKey];
 
   // build XY scales
@@ -163,7 +161,7 @@ d3.json('output.json').then(function (data) {
   var tip = d3
     .tip()
     .attr('class', 'd3-tip')
-    .html((EVENT, d) => 'Start Time:' + d.startTime);
+    .html((EVENT, d) => 'Start Time:' + d.entryTime);
 
   const svg = d3
     .select('#cegDiv') // div to be attached to

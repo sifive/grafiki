@@ -4,18 +4,20 @@
     "exit-address": "0x2000064e",
     "executions": [
         {
-            "startTime": 1,
-            "exeTime": 30,
-            "it":1
+            "entryTime": 1,
+            "duration": 30,
+            "iterations": 1
         },
         {
-            "startTime": 2,
-            "exeTime": 30,
-            "it":2
+            "entryTime": 2,
+            "duration": 30,
+            "iterations": 2
         },
         {
-            "startTime": 3,
-            "exeTime": 30
+            "entryTime": 3,
+            "duration": 30,
+            "iterations": 3
         }
     ]
 }
+
