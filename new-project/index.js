@@ -12,7 +12,7 @@ let buildXY = (data) => {
 
   x = d3
     .scaleBand()
-    .domain(data.map((d) => d.entryTime))
+    .domain(data.map((d) => d.iterations))
     .range([margin.left, width - margin.right])
     .padding(0.1);
 };
@@ -21,7 +21,7 @@ let buildAxis = () => {
   yAxis = (g) =>
     g
       .attr('transform', `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y).tickSizeOuter([5]))
+      .call(d3.axisLeft(y).tickSizeOuter([1]))
       .call((g) => g.select('.domain').remove());
 
   // x axis
@@ -69,7 +69,7 @@ function zoom(svg) {
     );
     svg
       .selectAll('.bars rect')
-      .attr('x', (d) => x(d.entryTime))
+      .attr('x', (d) => x(d.iterations))
       .attr('width', x.bandwidth());
     svg.selectAll('.x-axis').call(xAxis);
   }
@@ -94,7 +94,7 @@ let addBarAxisLabel = (svg, data) => {
     })
     .attr('class', 'bar label')
     .attr('x', function (d) {
-      return x(d.entryTime);
+      return x(d.d.iterations);
     })
     .attr('y', function (d) {
       return y(d.duration) - 20;
@@ -137,7 +137,7 @@ let buildBars = (data, svg, tip) => {
     .selectAll('rect')
     .data(data)
     .join('rect')
-    .attr('x', (d) => x(d.entryTime))
+    .attr('x', (d) => x(d.iterations))
     .attr('y', (d) => y(0))
     .attr('width', x.bandwidth())
     .on('mouseover', function (event, d) {
@@ -152,7 +152,7 @@ let margin = { top: 20, right: 30, bottom: 80, left: 60 },
   height = 300 - margin.top - margin.bottom;
 
 // read json data
-d3.json('output.json').then(function (data) {
+d3.json('output1.json').then(function (data) {
   data = data[exeKey];
 
   // build XY scales
