@@ -181,5 +181,5 @@ d3.json('output.json').then(function (data) {
   // text label for x axis
   addAxisLabel(svg);
   // this is the bar axis label
-  addBarAxisLabel(svg, data);
+  // addBarAxisLabel(svg, data);
 });
