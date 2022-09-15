@@ -224,4 +224,24 @@ d3.json('test_prime_20.json').then(function (data) {
   // grid
   // gridlines in y axis function
   addYGridLines(svg);
+
+  // listen for HTML input
+  // id =// thValue
+
+  d3.select('#thValue').on('input', function () {
+    console.log(+this.value);
+    let Thr = +this.value;
+    // update the whole chart
+    // Update the bar if the item in data is modified and already linked to a .bar element
+    d3.selectAll('rect')
+      .transition()
+      .duration(1000)
+      .style('fill', function (d) {
+        if (d.duration <= Thr) {
+          return 'yellow';
+        } else {
+          return defaultColor;
+        }
+      });
+  });
 });
