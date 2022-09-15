@@ -131,7 +131,7 @@ let addAxisLabel = (svg) => {
     .attr('id', 'yAxisLabel')
     .attr('class', 'y label')
     .attr('text-anchor', 'end')
-    .attr('y', 23) //closer to the graph
+    .attr('y', 5) //closer to the graph
     .attr('x', -25)
     .attr('dy', '.75em')
     .attr('transform', 'rotate(-90)')
@@ -146,7 +146,6 @@ let buildBars = (data, svg, tip) => {
   svg
     .append('g')
     .attr('class', 'bars')
-    .attr('fill', defaultColor)
     .selectAll('rect')
     .data(data)
     .join('rect')
@@ -154,6 +153,14 @@ let buildBars = (data, svg, tip) => {
     .attr('x', (d) => x(d.iteration))
     .attr('y', (d) => y(0))
     .attr('width', x.bandwidth())
+    .style('fill', function (d) {
+      // <== Add these
+      if (d.duration <= 600) {
+        return 'yellow';
+      } else {
+        return defaultColor;
+      }
+    })
     .on('mouseover', function (event, d) {
       const element = d3.select(this).datum().exeTime;
       d3.select(this)
