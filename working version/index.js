@@ -3,6 +3,13 @@ let xAxisLabel = 'Iteration Times';
 let exeKey = 'executions';
 let defaultColor = 'lightcoral';
 
+let margin = { top: 20, right: 30, bottom: 80, left: 60 },
+  width = 860 - margin.left - margin.right,
+  height = 300 - margin.top - margin.bottom;
+
+let INNER_WIDTH = width - margin.left - margin.right;
+let INNER_HEIGHT = height - margin.top - margin.bottom;
+
 // functions for various parts
 let buildXY = (data) => {
   y = d3
@@ -143,23 +150,26 @@ let buildBars = (data, svg, tip) => {
     .selectAll('rect')
     .data(data)
     .join('rect')
+    .style('stroke', '#000')
     .attr('x', (d) => x(d.iteration))
     .attr('y', (d) => y(0))
     .attr('width', x.bandwidth())
     .on('mouseover', function (event, d) {
       const element = d3.select(this).datum().exeTime;
-      d3.select(this).attr('fill', 'red');
+      d3.select(this)
+        .attr('fill', 'red')
+        .style('stroke', 'blue')
+        .attr('stroke-width', 3);
       tip.show(event, d, element);
     })
     .on('mouseout', function (d) {
-      d3.select(this).attr('fill', defaultColor);
+      d3.select(this)
+        .attr('fill', defaultColor)
+        .style('stroke', '#000')
+        .attr('stroke-width', 1);
       tip.hide(d);
     });
 };
-
-let margin = { top: 20, right: 30, bottom: 80, left: 60 },
-  width = 860 - margin.left - margin.right,
-  height = 300 - margin.top - margin.bottom;
 
 // read json data
 d3.json('test_prime_20.json').then(function (data) {
@@ -167,6 +177,7 @@ d3.json('test_prime_20.json').then(function (data) {
 
   // build XY scales
   buildXY(data);
+
   // Tooltip
   var tip = d3
     .tip()
