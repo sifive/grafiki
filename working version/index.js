@@ -1,6 +1,7 @@
 let yAxisLabel = 'Execution Times';
 let xAxisLabel = 'Iteration Times';
 let exeKey = 'executions';
+let defaultColor = 'lightcoral';
 
 // functions for various parts
 let buildXY = (data) => {
@@ -12,7 +13,7 @@ let buildXY = (data) => {
 
   x = d3
     .scaleBand()
-    .domain(data.map((d) => d.iterations))
+    .domain(data.map((d) => d.iteration))
     .range([margin.left, width - margin.right])
     .padding(0.1);
 };
@@ -69,7 +70,7 @@ function zoom(svg) {
     );
     svg
       .selectAll('.bars rect')
-      .attr('x', (d) => x(d.iterations))
+      .attr('x', (d) => x(d.iteration))
       .attr('width', x.bandwidth());
     svg.selectAll('.x-axis').call(xAxis);
   }
@@ -94,7 +95,8 @@ let addBarAxisLabel = (svg, data) => {
     })
     .attr('class', 'bar label')
     .attr('x', function (d) {
-      return x(d.d.iterations);
+      return x(d.iteration);
+      // d.iteration;
     })
     .attr('y', function (d) {
       return y(d.duration) - 20;
@@ -129,22 +131,30 @@ let addAxisLabel = (svg) => {
     .text(yAxisLabel);
 };
 
+let doOnMouseOut = (d) => {
+  tip.hide(d);
+};
+
 let buildBars = (data, svg, tip) => {
   svg
     .append('g')
     .attr('class', 'bars')
-    .attr('fill', 'steelblue')
+    .attr('fill', defaultColor)
     .selectAll('rect')
     .data(data)
     .join('rect')
-    .attr('x', (d) => x(d.iterations))
+    .attr('x', (d) => x(d.iteration))
     .attr('y', (d) => y(0))
     .attr('width', x.bandwidth())
     .on('mouseover', function (event, d) {
       const element = d3.select(this).datum().exeTime;
+      d3.select(this).attr('fill', 'red');
       tip.show(event, d, element);
     })
-    .on('mouseout', tip.hide);
+    .on('mouseout', function (d) {
+      d3.select(this).attr('fill', defaultColor);
+      tip.hide(d);
+    });
 };
 
 let margin = { top: 20, right: 30, bottom: 80, left: 60 },
@@ -152,7 +162,7 @@ let margin = { top: 20, right: 30, bottom: 80, left: 60 },
   height = 300 - margin.top - margin.bottom;
 
 // read json data
-d3.json('output1.json').then(function (data) {
+d3.json('test_prime_20.json').then(function (data) {
   data = data[exeKey];
 
   // build XY scales
