@@ -7,9 +7,6 @@ let margin = { top: 20, right: 30, bottom: 80, left: 60 },
   width = 860 - margin.left - margin.right,
   height = 300 - margin.top - margin.bottom;
 
-let INNER_WIDTH = width - margin.left - margin.right;
-let INNER_HEIGHT = height - margin.top - margin.bottom;
-
 // functions for various parts
 let buildXY = (data) => {
   y = d3
@@ -29,7 +26,7 @@ let buildAxis = () => {
   yAxis = (g) =>
     g
       .attr('transform', `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y).tickSizeOuter([1]))
+      .call(d3.axisLeft(y))
       .call((g) => g.select('.domain').remove());
 
   // x axis
@@ -43,7 +40,7 @@ let barAnimation = (svg) => {
   svg
     .selectAll('rect')
     .transition()
-    .duration(100)
+    .duration(250)
     .attr('y', function (d) {
       return y(d.duration);
     })
@@ -52,7 +49,7 @@ let barAnimation = (svg) => {
     })
     .attr('opacity', 1)
     .delay(function (d, i) {
-      return i * 1;
+      return i * 3;
     });
 };
 function zoom(svg) {
@@ -87,6 +84,21 @@ let addAxis = (svg) => {
   svg.append('g').attr('class', 'x-axis').call(xAxis);
 
   svg.append('g').attr('class', 'y-axis').call(yAxis);
+};
+
+let addYGridLines = (svg) => {
+  function make_y_gridlines() {
+    return d3.axisLeft(y).ticks(5);
+  }
+
+  svg
+    .append('g')
+    .attr('class', 'grid')
+    .call(
+      make_y_gridlines()
+        .tickSize(-width - margin.left - margin.right)
+        .tickFormat('')
+    );
 };
 
 let addBarAxisLabel = (svg, data) => {
@@ -138,10 +150,6 @@ let addAxisLabel = (svg) => {
     .text(yAxisLabel);
 };
 
-let doOnMouseOut = (d) => {
-  tip.hide(d);
-};
-
 let buildBars = (data, svg, tip) => {
   svg
     .append('g')
@@ -154,7 +162,6 @@ let buildBars = (data, svg, tip) => {
     .attr('y', (d) => y(0))
     .attr('width', x.bandwidth())
     .style('fill', function (d) {
-      // <== Add these
       if (d.duration <= 600) {
         return 'yellow';
       } else {
@@ -171,6 +178,8 @@ let buildBars = (data, svg, tip) => {
     })
     .on('mouseout', function (d) {
       d3.select(this)
+        .transition('colorfade')
+        .duration(250)
         .attr('fill', defaultColor)
         .style('stroke', '#000')
         .attr('stroke-width', 1);
@@ -189,7 +198,7 @@ d3.json('test_prime_20.json').then(function (data) {
   var tip = d3
     .tip()
     .attr('class', 'd3-tip')
-    .html((EVENT, d) => 'Start Time:' + d.entryTime);
+    .html((EVENT, d) => 'Duration: ' + d.duration);
 
   const svg = d3
     .select('#cegDiv') // div to be attached to
@@ -202,6 +211,7 @@ d3.json('test_prime_20.json').then(function (data) {
   buildBars(data, svg, tip);
   // build axis
   buildAxis();
+
   // animation
   barAnimation(svg);
   //  call both the axis and add them
@@ -210,4 +220,8 @@ d3.json('test_prime_20.json').then(function (data) {
   addAxisLabel(svg);
   // this is the bar axis label
   // addBarAxisLabel(svg, data);
+
+  // grid
+  // gridlines in y axis function
+  addYGridLines(svg);
 });
