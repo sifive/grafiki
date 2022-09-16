@@ -206,6 +206,34 @@ let listenForThValue = (d3) => {
   });
 };
 
+let sortByDuration = (d3, data, svg) => {
+  d3.select('#durSortButton').on('click', function () {
+    console.log('clicked');
+    // data.sort(function (b, a) {
+    //   return a.duration - b.duration;
+    // });
+
+    svg
+      .selectAll('rect')
+      .data(data)
+      .sort(function (b, a) {
+        return a.duration - b.duration;
+      })
+      .transition()
+      .delay(function (d, i) {
+        return i * 10;
+      })
+      .duration(800)
+      .attr('x', function (d, i) {
+        return x(i);
+      });
+  });
+};
+
+function changeColor(color) {
+  d3.selectAll('rect').transition().duration(2000).style('fill', color);
+}
+
 // read json data
 d3.json('test_prime_20.json').then(function (data) {
   data = data[exeKey];
@@ -218,7 +246,7 @@ d3.json('test_prime_20.json').then(function (data) {
     .tip()
     .attr('class', 'd3-tip')
     .html((EVENT, d) => 'Duration: ' + d.duration);
-
+  // '<a href= "http://google.com">' + // The first <a> tag formatTime(d.date)'
   const svg = d3
     .select('#cegDiv') // div to be attached to
     .append('svg')
@@ -239,12 +267,11 @@ d3.json('test_prime_20.json').then(function (data) {
   addAxisLabel(svg);
   // this is the bar axis label
   // addBarAxisLabel(svg, data);
-
-  // grid
   // grid lines in y axis function
   addYGridLines(svg);
-
   // listen for HTML input
   // id =// thValue
   listenForThValue(d3);
+  sortByDuration(d3, data, svg);
+  // sorting
 });

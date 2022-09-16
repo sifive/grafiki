@@ -5,17 +5,20 @@
 }
 .grid path {
   stroke-width: 0.1;
-  stroke-dasharray: 1px;
+  stroke-dasharray: 2px;
   opacity: 0.7;
 }
-
+.grid {
+  stroke-dasharray: 2px;
+}
 /* ------- */
-#m {
-  background-color: rgb(214, 222, 222);
+#cegDiv {
+  background-color: rgb(232, 242, 242);
 }
 
-#exeBars:hover {
+#bars:hover {
   opacity: 0.5;
+  transition: all 1s ease-out;
   stroke: black;
 }
 
@@ -30,6 +33,7 @@
 /* tip */
 .d3-tip {
   font-family: Arial, Helvetica, sans-serif;
+  top: 100px;
   line-height: 1.4;
   padding: 20px;
   pointer-events: none !important;
