@@ -206,15 +206,19 @@ let listenForThValue = (d3) => {
   });
 };
 
+var sortOrder = false;
 let sortByDuration = (d3, data, svg) => {
   d3.select('#durSortButton').on('click', function () {
     console.log('clicked');
-    // data.sort(function (b, a) {
-    //   return a.duration - b.duration;
-    // });
+    sortOrder = !sortOrder;
+    sortItems = function (a, b) {
+      if (sortOrder) {
+        return a.duration - b.duration;
+      }
+      return a.duration - b.duration;
+    };
 
-    svg
-      .selectAll('rect')
+    d3.selectAll('rect')
       .data(data)
       .sort(function (b, a) {
         return a.duration - b.duration;
@@ -227,8 +231,64 @@ let sortByDuration = (d3, data, svg) => {
       .attr('x', function (d, i) {
         return x(i);
       });
+
+    data = sort_by_key(data, 'duration');
+
+    d3.selectAll('.x-axis').transition().duration(2000).style('fill', 'green');
+    // x.domain(data.map((d) => d.iteration));
+    // svg.select('.x-axis').transition().duration(500).call(xAxis);
+    d3.selectAll('.x-axis')
+      .transition()
+      .duration(2000)
+      .domain(data.map((d) => d.iteration))
+      .style('fill', 'green')
+      .call(xAxis);
   });
 };
+// d3.selectAll('rect').transition().duration(2000).style('fill', color);
+
+function sort_by_key(array, key) {
+  return array.sort(function (a, b) {
+    var x = a[key];
+    var y = b[key];
+    return x < y ? -1 : x > y ? 1 : 0;
+  });
+}
+
+var sortOrder = false;
+let sortByIteration = (d3, data, svg) => {
+  sortOrder = !sortOrder;
+  d3.select('#iTSortButton').on('click', function () {
+    console.log('It clicked', sortOrder, data);
+
+    console.log(sort_by_key(data, 'duration'));
+
+    d3.selectAll('rect')
+      .data(data)
+      .sort(function (b, a) {
+        return a.duration - b.duration;
+      })
+      .transition()
+      .duration(2000)
+      .delay(function (d, i) {
+        return i * 10;
+      })
+      .attr('x', function (d, i) {
+        return x(i);
+      });
+
+    // xAxis.domain()
+    data = sort_by_key(data, 'duration');
+
+    x.domain(data.map((d) => d.iteration));
+    svg.select('.x-axis').transition().duration(500).call(xAxis);
+  });
+};
+
+// TODO : fix that the axis as well needs to move along with the sort
+// TODO :  add sort by iteration value as well
+// TODO : fix the sort function
+// TODO : also make sure the whole thing is rebuilt
 
 function changeColor(color) {
   d3.selectAll('rect').transition().duration(2000).style('fill', color);
@@ -245,14 +305,18 @@ d3.json('test_prime_20.json').then(function (data) {
   var tip = d3
     .tip()
     .attr('class', 'd3-tip')
-    .html((EVENT, d) => 'Duration: ' + d.duration);
-  // '<a href= "http://google.com">' + // The first <a> tag formatTime(d.date)'
+    .html(
+      (EVENT, d) =>
+        'Duration: ' + d.duration + ' || ' + 'Exit Time: ' + d.exitAddress
+    );
   const svg = d3
     .select('#cegDiv') // div to be attached to
     .append('svg')
     .attr('viewBox', [0, 0, width, height])
     .call(zoom)
     .call(tip);
+
+  // console.log(data);
 
   //  build the bars of the graph
   buildBars(data, svg, tip);
@@ -273,5 +337,6 @@ d3.json('test_prime_20.json').then(function (data) {
   // id =// thValue
   listenForThValue(d3);
   sortByDuration(d3, data, svg);
+  sortByIteration(d3, data, svg);
   // sorting
 });
