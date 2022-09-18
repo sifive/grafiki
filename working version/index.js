@@ -22,7 +22,7 @@ let buildXY = (data) => {
     .padding(0.1);
 };
 
-let buildAxis = () => {
+let buildAxis = (data) => {
   yAxis = (g) =>
     g
       .attr('transform', `translate(${margin.left},0)`)
@@ -31,9 +31,12 @@ let buildAxis = () => {
 
   // x axis
   xAxis = (g) =>
-    g
-      .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x).tickSizeOuter([15]));
+    g.attr('transform', `translate(0,${height - margin.bottom})`).call(
+      d3
+        .axisBottom(x)
+        .tickFormat((i) => (x.domain().length < 90 ? data[i].iteration : null))
+        .tickSizeOuter([15])
+    );
 };
 
 let barAnimation = (svg) => {
@@ -321,7 +324,7 @@ d3.json('test_prime_20.json').then(function (data) {
   //  build the bars of the graph
   buildBars(data, svg, tip);
   // build axis
-  buildAxis();
+  buildAxis(data);
 
   // animation
   barAnimation(svg);
