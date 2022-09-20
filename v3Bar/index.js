@@ -10,7 +10,7 @@ d3.json('test_prime_20.json', function (error, data) {
   // console.log('after sort', data);
 
   // margins for both the bars
-  var margin = { top: 30, right: 30, bottom: 100, left: 40 },
+  var margin = { top: 30, right: 30, bottom: 100, left: 60 },
     margin2 = { top: 430, right: 30, bottom: 20, left: 40 },
     width = window.innerWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom,
@@ -67,11 +67,16 @@ d3.json('test_prime_20.json', function (error, data) {
   // Add the text label for the Y axis
   svg
     .append('text')
-    .attr('y', margin.top + 10)
-    .attr('x', margin.left + 28)
+    // .attr('y', margin.top + 10)
+    // .attr('x', margin.left + 28)
+    .attr('y', 4)
+    .attr('x', margin.top - 200)
+    // .attr('x', margin.left)
+    .attr('dy', '.75em')
+    .attr('transform', 'rotate(-90)')
     .style('text-anchor', 'middle')
     .style('font', '14px times')
-    .text('Duration');
+    .text('Duration Cycles');
 
   // title of the graph exp name
   svg
