@@ -79,102 +79,133 @@ d3.json('test_prime_20.json').then(function (data) {
     .nice()
     .range([height - margin.bottom, margin.top]);
 
-  const svg = d3
-    .select('#mainGraph') // div to be attached to
-    // .create('svg')
-    .append('svg')
-    .attr('viewBox', [0, 0, width, height]);
+  let chart = () => {
+    const svg = d3
+      .select('#mainGraph') // div to be attached to
+      // .create('svg')
+      .append('svg')
+      .attr('viewBox', [0, 0, width, height]);
 
-  const barGroup = svg
-    .append('g')
-    .call((g) => bars(svg, x, y, data, 'steelblue'));
-
-  const svg1 = d3
-    .select('#focusGraph') // div to be attached to
-    // .create('svg')
-    .append('svg')
-    .attr('viewBox', [0, 0, width, focusHeight]);
-
-  // build focus
-
-  // -----------------------------------------------
-  // focus brush
-
-  function brushed({ selection }) {
-    if (selection) {
-      const range = x.domain().map(x);
-      const i0 = d3.bisectRight(range, selection[0]);
-      const i1 = d3.bisectRight(range, selection[1]);
-
-      barGroup
-        .selectAll('rect')
-        .attr('fill', (d, i) => (i0 <= i && i < i1 ? 'orange' : null));
-
-      // set the brushed bar indices as the value of the 'focus' view
-      svg.property('value', x.domain().slice(i0, i1)).dispatch('input');
-    } else {
-      barGroup.selectAll('rect').attr('fill', 'steelblue');
-
-      svg.property('value', []).dispatch('input');
-    }
-  }
-
-  function brushended({ selection, sourceEvent }) {
-    if (!sourceEvent) {
-      return;
-    }
-    if (!selection) {
-      d3.select(this).transition().call(brush.move, defaultSelection);
-    }
-
-    const range = x.domain().map(x);
-    const x0 = range[d3.bisectRight(range, selection[0])] - dx;
-    const x1 =
-      range[d3.bisectRight(range, selection[1]) - 1] + x.bandwidth() + dx;
-
-    if (x0 === x1) {
-      d3.select(this).transition().call(brush.move, defaultSelection);
-    }
-
-    d3.select(this)
-      .transition()
-      .call(brush.move, x1 > x0 ? [x0, x1] : null);
-  }
-
-  const initialBrushMax = 10;
-
-  const brush = d3
-    .brushX()
-    .extent([
-      [margin.left, 0.5],
-      [width - margin.right, focusHeight - 10],
-    ])
-    .on('brush', brushed)
-    .on('end', brushended);
-
-  console.log(brush);
-
-  let barGroupF = () => {
-    svg
+    const barGroup = svg
       .append('g')
-      // .attr('fill', 'green')
-      .call((g) =>
-        bars(
-          svg1,
-          x,
-          y.copy().range([focusHeight - marginFocus.bottom, 60]),
-          data,
-          'red'
-        )
-      );
+      .call((g) => bars(svg, x, y, data, 'steelblue'));
+
+    let update = (focusX, focusY, focusData) => {
+      barGroup.call((g) => bars(g, focusX, focusY, focusData));
+      gy.call(yAxis, focusY, height);
+      gx.call(xAxis, focusX, height);
+    };
+
+    return Object.assign(svg.node(), { update });
   };
-  barGroupF();
 
-  const dx = (x.bandwidth() * x.paddingInner()) / 2;
-  const defaultSelection = [
-    x.range()[0] + dx,
-    x.range()[0] + x.bandwidth() * initialBrushMax + dx,
-  ];
+  // object return value
 
-  svg1.append('g').call(brush).call(brush.move, defaultSelection);
+  // -----------------
+  let focus = () => {
+    const svg1 = d3
+      .select('#focusGraph') // div to be attached to
+      // .create('svg')
+      .append('svg')
+      .attr('viewBox', [0, 0, width, focusHeight]);
+
+    // build focus
+
+    // -----------------------------------------------
+    // focus brush
+
+    function brushed({ selection }) {
+      if (selection) {
+        const range = x.domain().map(x);
+        const i0 = d3.bisectRight(range, selection[0]);
+        const i1 = d3.bisectRight(range, selection[1]);
+
+        barGroup
+          .selectAll('rect')
+          .attr('fill', (d, i) => (i0 <= i && i < i1 ? 'orange' : null));
+
+        // set the brushed bar indices as the value of the 'focus' view
+        svg1.property('value', x.domain().slice(i0, i1)).dispatch('input');
+      } else {
+        barGroup.selectAll('rect').attr('fill', 'steelblue');
+
+        svg1.property('value', []).dispatch('input');
+      }
+    }
+
+    function brushended({ selection, sourceEvent }) {
+      if (!sourceEvent) {
+        return;
+      }
+      if (!selection) {
+        d3.select(this).transition().call(brush.move, defaultSelection);
+      }
+
+      const range = x.domain().map(x);
+      const x0 = range[d3.bisectRight(range, selection[0])] - dx;
+      const x1 =
+        range[d3.bisectRight(range, selection[1]) - 1] + x.bandwidth() + dx;
+
+      if (x0 === x1) {
+        d3.select(this).transition().call(brush.move, defaultSelection);
+      }
+
+      d3.select(this)
+        .transition()
+        .call(brush.move, x1 > x0 ? [x0, x1] : null);
+    }
+
+    const initialBrushMax = 10;
+
+    const brush = d3
+      .brushX()
+      .extent([
+        [margin.left, 0.5],
+        [width - margin.right, focusHeight - 10],
+      ])
+      .on('brush', brushed)
+      .on('end', brushended);
+
+    console.log(brush);
+
+    let barGroup = () => {
+      svg1
+        .append('g')
+        // .attr('fill', 'green')
+        .call((g) =>
+          bars(
+            svg1,
+            x,
+            y.copy().range([focusHeight - marginFocus.bottom, 60]),
+            data,
+            'red'
+          )
+        );
+    };
+    barGroup();
+
+    const dx = (x.bandwidth() * x.paddingInner()) / 2;
+    const defaultSelection = [
+      x.range()[0] + dx,
+      x.range()[0] + x.bandwidth() * initialBrushMax + dx,
+    ];
+
+    svg1.append('g').call(brush).call(brush.move, defaultSelection);
+
+    return svg1.node();
+  };
+  chart();
+  focus();
+
+  let update = () => {
+    const [minIndex, maxIndex] = d3.extent(focus());
+    const maxY = d3.max(data, (d, i) =>
+      minIndex <= i && i <= maxIndex ? d.duration : NaN
+    );
+    const focusData = data.slice(minIndex, maxIndex + 1); // relies on array sort order
+    const focusX = x.copy().domain(focus());
+    const focusY = y.copy().domain([0, maxY]);
+
+    chart.update(focusX, focusY, focusData);
+  };
 });

@@ -34,7 +34,7 @@ let buildAxis = (data) => {
     g.attr('transform', `translate(0,${height - margin.bottom})`).call(
       d3
         .axisBottom(x)
-        .tickFormat((i) => (x.domain().length < 90 ? data[i].iteration : null))
+        .tickFormat((i) => (x.domain().length > 90 ? data[i].iteration : null))
         .tickSizeOuter([15])
     );
 };
