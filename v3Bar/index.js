@@ -3,7 +3,11 @@ let exeKey = 'executions';
 d3.json('test_prime_20.json', function (error, data) {
   if (error) throw error;
   data = data[exeKey];
-  console.log(data);
+  // console.log('before sort', data);
+  // data.sort(function (a, b) {
+  //   return d3.ascending(a.duration, b.duration);
+  // });
+  // console.log('after sort', data);
 
   // margins for both the bars
   var margin = { top: 30, right: 30, bottom: 100, left: 40 },
@@ -160,6 +164,8 @@ d3.json('test_prime_20.json', function (error, data) {
         return height - y(d.duration);
       },
     });
+
+  // before the functions start
 
   enter(data);
   updateScale(data);
@@ -363,22 +369,63 @@ d3.json('test_prime_20.json', function (error, data) {
       });
   }
 
+  d3.select('input').on('change', change);
   // sorting
-  //Sorting logic
-  d3.select('#sortAscending').on('click', function () {
-    console.log('this button was clicked');
-    bars
-      .sort(function (a, b) {
-        return d3.ascending(a.duration, b.duration);
-      })
-      .transition()
-      .delay(function (d, i) {
-        return i * 5; // gives it a smoother effect
-      })
-      .duration(500)
-      .attr('x', function (d, i) {
-        return x(d.iteration);
+
+  function change() {
+    var x0 = x
+      .domain(
+        data
+          .sort(
+            this.checked
+              ? function (a, b) {
+                  return b.duration - a.duration;
+                }
+              : function (a, b) {
+                  return d3.ascending(a.duration, b.duration);
+                }
+          )
+          .map(function (d) {
+            return d.duration;
+          })
+      )
+      .copy();
+
+    svg.selectAll('.bar').sort(function (a, b) {
+      return x0(a.duration) - x0(b.duration);
+    });
+
+    var transition = svg.transition().duration(750),
+      delay = function (d, i) {
+        return i * 5;
+      };
+
+    transition
+      .selectAll('.bar')
+      .delay(delay)
+      .attr('x', function (d) {
+        return x0(d.duration);
       });
-  });
+
+    // subBar;
+
+    svg.selectAll('.subBar').sort(function (a, b) {
+      return x0(a.duration) - x0(b.duration);
+    });
+
+    var transition = svg.transition().duration(750),
+      delay = function (d, i) {
+        return i * 5;
+      };
+
+    transition
+      .selectAll('.subBar')
+      .delay(delay)
+      .attr('x', function (d) {
+        return x0(d.duration);
+      });
+
+    transition.select('.x.axis').call(xAxis).delay(delay);
+  }
 });
 // end function
