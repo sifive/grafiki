@@ -3,11 +3,6 @@ let exeKey = 'executions';
 d3.json('test_prime_20.json', function (error, data) {
   if (error) throw error;
   data = data[exeKey];
-  // console.log('before sort', data);
-  // data.sort(function (a, b) {
-  //   return d3.ascending(a.duration, b.duration);
-  // });
-  // console.log('after sort', data);
 
   // margins for both the bars
   var margin = { top: 30, right: 30, bottom: 100, left: 60 },
@@ -432,5 +427,20 @@ d3.json('test_prime_20.json', function (error, data) {
 
     transition.select('.x.axis').call(xAxis).delay(delay);
   }
+  function change1() {
+    console.log('this was clicked phew');
+    // our year will this.innerText
+    // console.log(this.innerText);
+
+    brush.extent([0, 6]);
+
+    brush(d3.select('.brush').transition());
+
+    brush.event(d3.select('.brush').transition().delay(1000));
+  }
+  // // buttons for programmatically brush tru the graph
+  // d3.select('#sortAscending').on('click', change1);
+  d3.select('#sortAscending').on('click', change1);
+  // sorting
 });
 // end function
