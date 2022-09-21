@@ -431,16 +431,16 @@ d3.json('test_prime_20.json', function (error, data) {
 
     transition.select('.x.axis').call(xAxis).delay(delay);
   }
-  function change1() {
-    brush.extent([0, 6]);
+  // function change1() {
+  //   brush.extent([0, 6]);
 
-    brush(d3.select('.brush').transition());
+  //   brush(d3.select('.brush').transition());
 
-    brush.event(d3.select('.brush').transition().delay(1000));
-  }
+  //   brush.event(d3.select('.brush').transition().delay(1000));
+  // }
   // // buttons for programmatically brush tru the graph
   // d3.select('#sortAscending').on('click', change1);
-  d3.select('#programBrush').on('click', change1);
+  // d3.select('#programBrush').on('click', change1);
   // sorting
 });
 // end function
