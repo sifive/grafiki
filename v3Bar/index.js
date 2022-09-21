@@ -1,5 +1,46 @@
 let exeKey = 'executions';
 
+let buildMainBars = (bars) => {
+  bars
+    .enter()
+    .append('rect')
+    .classed('bar', true)
+    .attr({
+      height: function (d, i) {
+        return 0;
+      },
+      width: function (d) {
+        return x.rangeBand();
+      },
+      x: function (d) {
+        return x(d.iteration);
+      },
+      y: function (d) {
+        return y(d.duration);
+      },
+    })
+    .on('mouseover', function (d) {
+      d3.select(this).style('fill', 'green');
+      tooltip
+        .html(
+          `<div>Duration: ${d.duration}</div><div>Iteration: ${d.iteration}</div>`
+        )
+        .style('visibility', 'visible');
+    })
+    .on('mousemove', function () {
+      tooltip
+        .style('top', d3.event.pageY - 10 + 'px')
+        .style('left', d3.event.pageX + 10 + 'px');
+    })
+    .on('mouseout', function (d) {
+      tooltip.html(``).style('visibility', 'hidden');
+      d3.select(this)
+        .transition('colorfade')
+        .duration(250)
+        .style('fill', 'lightcoral');
+    });
+};
+
 d3.json('test_prime_20.json', function (error, data) {
   if (error) throw error;
   data = data[exeKey];
@@ -329,44 +370,7 @@ d3.json('test_prime_20.json', function (error, data) {
     // build bars
     var bars = focus.selectAll('.bar').data(data);
 
-    bars
-      .enter()
-      .append('rect')
-      .classed('bar', true)
-      .attr({
-        height: function (d, i) {
-          return 0;
-        },
-        width: function (d) {
-          return x.rangeBand();
-        },
-        x: function (d) {
-          return x(d.iteration);
-        },
-        y: function (d) {
-          return y(d.duration);
-        },
-      })
-      .on('mouseover', function (d) {
-        d3.select(this).style('fill', 'green');
-        tooltip
-          .html(
-            `<div>Duration: ${d.duration}</div><div>Iteration: ${d.iteration}</div>`
-          )
-          .style('visibility', 'visible');
-      })
-      .on('mousemove', function () {
-        tooltip
-          .style('top', d3.event.pageY - 10 + 'px')
-          .style('left', d3.event.pageX + 10 + 'px');
-      })
-      .on('mouseout', function (d) {
-        tooltip.html(``).style('visibility', 'hidden');
-        d3.select(this)
-          .transition('colorfade')
-          .duration(250)
-          .style('fill', 'lightcoral');
-      });
+    buildMainBars(bars);
   }
 
   d3.select('input').on('change', change);
