@@ -428,10 +428,6 @@ d3.json('test_prime_20.json', function (error, data) {
     transition.select('.x.axis').call(xAxis).delay(delay);
   }
   function change1() {
-    console.log('this was clicked phew');
-    // our year will this.innerText
-    // console.log(this.innerText);
-
     brush.extent([0, 6]);
 
     brush(d3.select('.brush').transition());
@@ -440,7 +436,7 @@ d3.json('test_prime_20.json', function (error, data) {
   }
   // // buttons for programmatically brush tru the graph
   // d3.select('#sortAscending').on('click', change1);
-  d3.select('#sortAscending').on('click', change1);
+  d3.select('#programBrush').on('click', change1);
   // sorting
 });
 // end function
