@@ -47,7 +47,7 @@ d3.json('test_prime_20.json', function (error, data) {
 
   // margins for both the bars
   var margin = { top: 30, right: 30, bottom: 100, left: 60 },
-    margin2 = { top: 430, right: 30, bottom: 20, left: 40 },
+    margin2 = { top: 430, right: 30, bottom: 20, left: 60 },
     width = window.innerWidth - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom,
     height2 = 500 - margin2.top - margin2.bottom;
@@ -441,6 +441,7 @@ d3.json('test_prime_20.json', function (error, data) {
   // // buttons for programmatically brush tru the graph
   // d3.select('#sortAscending').on('click', change1);
   d3.select('#programBrush').on('click', change1);
+
   // sorting
 });
 // end function

@@ -1,5 +1,12 @@
+body {
+  background-color: #000;
+  /* color: bisque; */
+}
+
 svg {
   font: 10px sans-serif;
+  color: white;
+  fill: white;
 }
 
 .bar {
@@ -15,7 +22,7 @@ svg {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: white;
   shape-rendering: crispEdges;
 }
 
@@ -56,3 +63,5 @@ svg {
   top: 100%;
   left: 0;
 }
+
+/* x axis */
