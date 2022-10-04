@@ -40,7 +40,7 @@ let buildMainBars = (bars) => {
         .style('fill', 'lightcoral');
     });
 };
-
+// read json file
 d3.json('test_prime_20.json', function (error, data) {
   if (error) throw error;
   data = data[exeKey];
@@ -62,6 +62,7 @@ d3.json('test_prime_20.json', function (error, data) {
     xAxis2 = d3.svg.axis().scale(x2).orient('bottom').tickValues([]), // this is why the tick values are not show in mini map
     yAxis = d3.svg.axis().scale(y).orient('left');
 
+  //  x and y domains
   x.domain(
     data.map(function (d) {
       return d.iteration;
@@ -153,6 +154,7 @@ d3.json('test_prime_20.json', function (error, data) {
     .style('color', '#fff')
     .text('a simple tooltip');
 
+  // builds the bars
   var bars = focus.selectAll('.bar').data(data);
   bars
     .enter()

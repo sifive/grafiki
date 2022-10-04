@@ -218,6 +218,7 @@ d3.json('test_prime_20.json', function (error, data) {
     .enter()
     .append('rect')
     .classed('subBar', true)
+    // .style('fill', 'dark-grey')
     .attr({
       height: function (d) {
         return height2 - y2(d.duration);
@@ -424,6 +425,7 @@ d3.json('test_prime_20.json', function (error, data) {
 
     transition
       .selectAll('.subBar')
+      .style('fill', 'grey')
       .delay(delay)
       .attr('x', function (d) {
         return x0(d.duration);
