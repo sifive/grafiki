@@ -1,3 +1,4 @@
+'use stict'
 var i = document.getElementById('menu').style;
 if (document.addEventListener) {
   document.addEventListener(
