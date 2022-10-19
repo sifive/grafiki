@@ -41,3 +41,9 @@ function menu(x, y) {
   i.visibility = 'visible';
   i.opacity = '1';
 }
+function menu1(x, y) {
+  i.top = y + 'px';
+  i.left = x + 'px';
+  i.visibility = 'visible';
+  i.opacity = '1';
+}
