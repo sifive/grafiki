@@ -46,11 +46,11 @@ d3.json('test_prime_20.json', function (error, data) {
   data = data[exeKey];
 
   // margins for both the bars
-  var margin = { top: 30, right: 30, bottom: 100, left: 60 },
-    margin2 = { top: 430, right: 30, bottom: 20, left: 60 },
-    width = window.innerWidth - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom,
-    height2 = 500 - margin2.top - margin2.bottom;
+  var margin = { top: 40, right: 60, bottom: 100, left: 80 },
+    margin2 = { top: 200, right: 60, bottom: 20, left: 80 },
+    height = 250 - margin.top - margin.bottom,
+    height2 = 250 - margin2.top - margin2.bottom,
+    width = window.innerWidth - margin.left - margin.right;
 
   // scales for both the bars
   var x = d3.scale.ordinal().rangeBands([0, width], 0.1),
@@ -58,9 +58,11 @@ d3.json('test_prime_20.json', function (error, data) {
     y = d3.scale.linear().range([height, 0]),
     y2 = d3.scale.linear().range([height2, 0]);
 
-  var xAxis = d3.svg.axis().scale(x).orient('bottom'),
-    xAxis2 = d3.svg.axis().scale(x2).orient('bottom').tickValues([]), // this is why the tick values are not show in mini map
-    yAxis = d3.svg.axis().scale(y).orient('left');
+  // ! fixws and changed
+
+  var xAxis = d3.svg.axis().scale(x).orient('bottom');
+  var xAxis2 = d3.svg.axis().scale(x2).orient('bottom').tickValues([]); // this is why the tick values are not show in mini map
+  var yAxis = d3.svg.axis().scale(y).orient('left').ticks(5);
 
   x.domain(
     data.map(function (d) {
@@ -94,7 +96,7 @@ d3.json('test_prime_20.json', function (error, data) {
     .append('text') // text label for the x axis
     .attr(
       'transform',
-      'translate(' + width / 2 + ' ,' + (height + margin.bottom + 25) + ')'
+      'translate(' + width / 2 + ' ,' + (height + margin.bottom + 40) + ')'
     )
     .style('text-anchor', 'middle')
     .style('font', '14px times')
@@ -103,13 +105,9 @@ d3.json('test_prime_20.json', function (error, data) {
   // Add the text label for the Y axis
   svg
     .append('text')
-    // .attr('y', margin.top + 10)
-    // .attr('x', margin.left + 28)
-    .attr('y', 4)
-    .attr('x', margin.top - 200)
-    // .attr('x', margin.left)
-    .attr('dy', '.75em')
     .attr('transform', 'rotate(-90)')
+    .attr('y', 35)
+    .attr('x', -95)
     .style('text-anchor', 'middle')
     .style('font', '14px times')
     .text('Duration Cycles');
@@ -137,6 +135,8 @@ d3.json('test_prime_20.json', function (error, data) {
     .attr('class', 'x axis')
     .attr('transform', 'translate(0,' + height + ')')
     .call(xAxis);
+
+  // !FIX FOR Y AXIS TICKS
 
   focus.append('g').attr('class', 'y axis').call(yAxis);
 
